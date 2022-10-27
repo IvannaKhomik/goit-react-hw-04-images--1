@@ -1,56 +1,43 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import toast from 'react-hot-toast';
 
 import { Header, SearchForm, SearchBtn, SearchField } from './Searchbar.styled';
 
-const INITIAL_STATE = {
-  query: '',
-};
-export default class Searchbar extends Component {
-  state = {
-    ...INITIAL_STATE,
-  };
+export const Searchbar = ({ searchByQuery }) => {
+  const [query, setQuery] = useState('');
 
-  onInputChange = e => {
+  const onInputChange = e => {
     const { value } = e.currentTarget;
-    this.setState({ query: value.toLowerCase() });
+    setQuery(value.toLowerCase());
   };
 
-  onSubmitBtn = e => {
+  const onSubmitBtn = e => {
     e.preventDefault();
-    const { query } = this.state;
     if (query.trim() === '') {
       return toast.error('Please, type the title of image you want to find');
     }
-    this.props.searchByQuery(query);
-    this.reset();
+    searchByQuery(query);
+    setQuery('');
   };
 
-  reset = () => {
-    this.setState({ ...INITIAL_STATE });
-  };
+  return (
+    <>
+      <Header>
+        <SearchForm onSubmit={onSubmitBtn}>
+          <SearchBtn type="submit">
+            <BsSearch />
+          </SearchBtn>
 
-  render() {
-    const { query } = this.state;
-    return (
-      <>
-        <Header>
-          <SearchForm onSubmit={this.onSubmitBtn}>
-            <SearchBtn type="submit">
-              <BsSearch />
-            </SearchBtn>
-
-            <SearchField
-              onChange={this.onInputChange}
-              value={query}
-              type="text"
-              autocomplete="off"
-              placeholder="Search images and photos"
-            />
-          </SearchForm>
-        </Header>
-      </>
-    );
-  }
-}
+          <SearchField
+            onChange={onInputChange}
+            value={query}
+            type="text"
+            autocomplete="off"
+            placeholder="Search images and photos"
+          />
+        </SearchForm>
+      </Header>
+    </>
+  );
+};

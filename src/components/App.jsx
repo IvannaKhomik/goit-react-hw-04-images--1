@@ -1,51 +1,38 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Container } from './App.styled';
-import Modal from './Modal';
-import ImageGallery from './ImageGallery';
-import Searchbar from './Searchbar';
+import { Modal } from './Modal';
+import { ImageGallery } from './ImageGallery';
+import { Searchbar } from './Searchbar';
 
-export default class App extends Component {
-  state = {
-    query: '',
-    largeImgUrl: null,
-    tag: null,
+export const App = () => {
+  const [query, setQuery] = useState('');
+  const [largeImgUrl, setLargeImgUrl] = useState(null);
+  const [tag, setTag] = useState(null);
+
+  const onSetLargeImgUrl = (image, tag) => {
+    setLargeImgUrl(image);
+    setTag(tag);
   };
 
-  onSearchByQuery = query => {
-    this.setState({ query: query });
-  };
-
-  onSetLargeImgUrl = (image, tag) => {
-    this.setState({
-      largeImgUrl: image,
-      tag,
-    });
-  };
-
-  onCloseModal = e => {
-    this.setState({
-      largeImgUrl: null,
-    });
-  };
-
-  render() {
-    const { query, largeImgUrl, tag } = this.state;
-    return (
-      <Container>
-        <Searchbar searchByQuery={this.onSearchByQuery} />
-        <Toaster
-          position="top-center"
-          reverseOrder={true}
-          toastOptions={{
-            duration: 2000,
-          }}
+  return (
+    <Container>
+      <Searchbar searchByQuery={setQuery} />
+      <Toaster
+        position="top-center"
+        reverseOrder={true}
+        toastOptions={{
+          duration: 2000,
+        }}
+      />
+      <ImageGallery onSetLargeImgUrl={onSetLargeImgUrl} query={query} />
+      {largeImgUrl && (
+        <Modal
+          url={largeImgUrl}
+          tag={tag}
+          onCloseModal={setLargeImgUrl(null)}
         />
-        <ImageGallery onSetLargeImgUrl={this.onSetLargeImgUrl} query={query} />
-        {largeImgUrl && (
-          <Modal url={largeImgUrl} tag={tag} onCloseModal={this.onCloseModal} />
-        )}
-      </Container>
-    );
-  }
-}
+      )}
+    </Container>
+  );
+};
